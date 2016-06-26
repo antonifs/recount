@@ -18,6 +18,12 @@ class Item(models.Model):
     date_created = models.DateTimeField(auto_now=False, auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True, auto_now_add=False)
 
+    def category_name(self):
+        return self.category.name
+
+    def user_name(self):
+        return u'%s %s' % (self.user.first_name, self.user.last_name)
+
     def __str__(self):
         return self.code
 
