@@ -22,13 +22,18 @@ class ItemAdmin(admin.ModelAdmin):
     list_filter = ('category__name', 'date_created')
 
 class PriceAdmin(admin.ModelAdmin):
-    list_display = ('price', 'date_updated')
+    list_display = (
+                    'price',
+                    'date_updated',
+                    'user_name',
+                    )
 
 class StockAdmin(admin.ModelAdmin):
     list_display = (
                     'item_code',
                     'amount',
                     'date_updated',
+                    'user_name',
                     )
 
 admin.site.register(Category, CategoryAdmin)

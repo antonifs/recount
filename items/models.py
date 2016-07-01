@@ -44,6 +44,9 @@ class Stock(models.Model):
         stock = Stock.objects.filter(item_id=id).order_by('-id')
         return stock[0].amount
 
+    def user_name(self):
+        return u'%s %s' % (self.user.first_name, self.user.last_name)
+
     def __str__(self):
         return str(self.amount)
 
@@ -55,6 +58,9 @@ class Price(models.Model):
 
     def item_code(self):
         return self.item.code
+
+    def user_name(self):
+        return u'%s %s' % (self.user.first_name, self.user.last_name)
 
     def __str__(self):
         return str(self.price)
