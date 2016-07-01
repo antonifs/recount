@@ -23,7 +23,7 @@ class Item(models.Model):
 
     def stock_amount(self):
         stock = Stock()
-        return stock.cd(1)
+        return stock.get_stock(self.id)
 
     def user_name(self):
         return u'%s %s' % (self.user.first_name, self.user.last_name)
@@ -40,8 +40,9 @@ class Stock(models.Model):
     def item_code(self):
         return self.item.code
 
-    def cd(self, id):
-        return self.objects.filter(id=1)
+    def get_stock(self, id):
+        stock = Stock.objects.filter(item_id=id).order_by('-id')
+        return stock[0].amount
 
     def __str__(self):
         return str(self.amount)
