@@ -28,6 +28,8 @@ class Item(models.Model):
     def user_name(self):
         return u'%s %s' % (self.user.first_name, self.user.last_name)
 
+    user_name.short_description = 'Updated By'
+
     def __str__(self):
         return self.code
 
@@ -47,6 +49,8 @@ class Stock(models.Model):
     def user_name(self):
         return u'%s %s' % (self.user.first_name, self.user.last_name)
 
+    user_name.short_description = 'Updated By'
+
     def __str__(self):
         return str(self.amount)
 
@@ -61,6 +65,8 @@ class Price(models.Model):
 
     def user_name(self):
         return u'%s %s' % (self.user.first_name, self.user.last_name)
+
+    user_name.short_description = 'Updated By'
 
     def __str__(self):
         return str(self.price)
