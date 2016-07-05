@@ -7,10 +7,14 @@ from .models import (
         Stock
         )
 
-def update_price(modeladmin, request, queryset):
-    queryset.update(status = 2)
-update_price.short_description = "Update Price"
+def update_all(modeladmin, request, queryset):
+    queryset.update(price = 0)
+update_all.short_description = "Update selected items"
 
+def activate(modeladmin, request, queryset):
+    queryset.update(status = 1)
+    print "status updated"
+activate.short_description = "Activate selected items"
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'description', 'date_created', 'date_updated')
@@ -20,12 +24,13 @@ class ItemAdmin(admin.ModelAdmin):
                     'category_name',
                     'description',
                     'stock_amount',
-                    'user_name',
+                    'price_price',
+                    'status',
                     'date_updated'
                     )
     search_fields = ('code', 'category__name', 'description')
     list_filter = ('category__name', 'date_created')
-    actions = [update_price]
+    actions = [activate]
 
 class PriceAdmin(admin.ModelAdmin):
     list_display = (
@@ -36,6 +41,7 @@ class PriceAdmin(admin.ModelAdmin):
                     )
     search_fields = ('item__code', 'date_updated')
     list_filter = ('date_updated',)
+    actions = [update_all]
 
 class StockAdmin(admin.ModelAdmin):
     list_display = (
