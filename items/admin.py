@@ -1,4 +1,4 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.http import HttpResponse
 from django.core import serializers
 
@@ -29,18 +29,16 @@ class ItemAdmin(admin.ModelAdmin):
     list_filter = ('category__name', 'date_created')
 
     def activate(self, request, queryset):
-        rows_updated = 0
-        for d in queryset.values():
-            if d['status'] == 1:
-                rows_updated = queryset.update(status = 1)
-                if rows_updated == 1:
-                    message_bit = "1 Item was"
-                else:
-                    message_bit = "%s Items were " % rows_updated
-        if rows_updated == 0:
-            self.message_user ("Item is being active already.")
+        active = 1
+        counter = 0
+        for data in queryset.values():
+            if data['status'] != active:
+                counter += 1
+                rows_updated = queryset.update(status = active)
+        if counter == 0:
+            self.message_user (request, "Item is being active already.", level=messages.WARNING)
         else:
-            self.message_user (request, "%s successfully updated. " % rows_updated)
+            self.message_user (request, "%s successfully updated. " % counter, level=messages.SUCCESS)
 
     def export_as_json(self, request, queryset):
         response = HttpResponse(content_type = "application/json")
