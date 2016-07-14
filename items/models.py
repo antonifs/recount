@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.humanize.templatetags.humanize import intcomma
 
 class Category(models.Model):
     name = models.CharField(max_length = 30)
@@ -39,7 +40,8 @@ class Item(models.Model):
 
     def price_price(self):
         price = Price()
-        return price.get_price(self.id)
+        price = round(float(price.get_price(self.id)), 2)
+        return "IDR %s%s" % (intcomma(int(price)), ("%0.2f" % price)[-3:])
 
     def __str__(self):
         return self.code
@@ -55,7 +57,10 @@ class Stock(models.Model):
 
     def get_stock(self, id):
         stock = Stock.objects.filter(item_id=id).order_by('-id')
-        return stock[0].amount
+        if not stock:
+            return 0
+        else:
+            return stock[0].amount
 
     def user_name(self):
         return u'%s %s' % (self.user.first_name, self.user.last_name)
@@ -79,7 +84,10 @@ class Price(models.Model):
 
     def get_price(self, id):
         price = Price.objects.filter(item_id=id).order_by('-id')
-        return price[0].price
+        if not price:
+            return 0
+        else:
+            return price[0].price
 
     user_name.short_description = 'Updated By'
 
