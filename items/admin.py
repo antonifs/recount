@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from django.contrib import admin, messages
 from django.http import HttpResponse
 from django.core import serializers
@@ -17,10 +18,11 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'description', 'date_created', 'date_updated')
 
 class ItemAdmin(admin.ModelAdmin):
+
     list_display = ('code',
                     'category_name',
                     'description',
-                    'stock_amount',
+                    'stock_available',
                     'price_price',
                     'status',
                     'date_updated'
@@ -40,12 +42,31 @@ class ItemAdmin(admin.ModelAdmin):
         else:
             self.message_user (request, "%s successfully updated. " % counter, level=messages.SUCCESS)
 
+    def add_stock(self, request, queryset):
+
+        from items.form import ItemForm
+
+        if 'do_action' in request.POST:
+            form = ItemForm(request.POST)
+            print form
+            if form.is_valid():
+                new_stock = form.cleaned_data['stock']
+                updated = queryset.update(stock_available=new_stock)
+                return
+        else:
+            form = ItemForm()
+
+        return render(request, 'admin/items/add_stock.html',
+            {'title': u'Add Stock',
+             'objects': queryset,
+             'form': form})
+
     def export_as_json(self, request, queryset):
         response = HttpResponse(content_type = "application/json")
         serializers.serialize("json", queryset, stream=response)
         return response
 
-    actions = [export_as_json, activate]
+    actions = [export_as_json, activate, add_stock]
 
 
 class PriceAdmin(admin.ModelAdmin):

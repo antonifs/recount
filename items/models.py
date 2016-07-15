@@ -28,15 +28,12 @@ class Item(models.Model):
     user = models.ForeignKey(User)
     category = models.ForeignKey(Category)
     status = models.IntegerField(choices=STATUS_CHOICES, default=NEW)
+    stock_available = models.IntegerField(default=0)
     date_created = models.DateTimeField(auto_now=False, auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True, auto_now_add=False)
 
     def category_name(self):
         return self.category.name
-
-    def stock_amount(self):
-        stock = Stock()
-        return stock.get_stock(self.id)
 
     def price_price(self):
         price = Price()
