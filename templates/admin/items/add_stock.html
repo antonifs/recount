@@ -1,28 +1,23 @@
 {% extends "admin/base_site.html" %}
+{% load i18n l10n %}
 
 {% block content %}
-    <form action="./add_stock/" method="post">
+<form action="" method="post">{% csrf_token %}
+    <p>The following videos will be accepted:</p>
 
-        {% csrf_token %}
-        <input type="hidden" name="action" value="set_genre_action">
-        <input type="hidden" name="do_action" value="yes">
+    <ul>
+        {% for object in objects %}
+            <li>{{ object.code }} <input type="text" value="{{ object.stock_available }}" name="stock_available"> </li>
+        {% endfor %}
+    </ul>
 
-        <div>
-            {{ form.genre }}
-            <input type="submit" class="default" style="float: none" value="Change">
-            {{ form.genre.errors }}
-        </div>
-
-        <h2>Change genre for next movies</h2>
-
-        <ul>
-            {% for object in objects %}
-                <li>
-                    {{ object.code }}
-                    <input type="text" value="0">
-                </li>
-            {% endfor %}
-        </ul>
-
-    </form>
+    <div>
+    {% for obj in objects %}
+    <input type="hidden" name="{{ action_checkbox_name }}" value="{{ obj.pk|unlocalize }}" />
+    {% endfor %}
+    <input type="hidden" name="action" value="add_stock" />
+    <input type="hidden" name="post" value="yes" />
+    <input type="submit" value="{% trans "Yes, I'm sure" %}" />
+    </div>
+</form>
 {% endblock %}

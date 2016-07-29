@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.contrib import admin, messages
+from django.contrib.admin import helpers
 from django.http import HttpResponse
 from django.core import serializers
 
@@ -46,20 +47,35 @@ class ItemAdmin(admin.ModelAdmin):
 
         from items.form import ItemForm
 
-        if 'do_action' in request.POST:
+        if request.POST.get('post'):
             form = ItemForm(request.POST)
+
             print form
-            if form.is_valid():
-                new_stock = form.cleaned_data['stock']
-                updated = queryset.update(stock_available=new_stock)
-                return
+            # for data in queryset:
+                # print data['stock_available'], data['id']
+
+            # if form.is_valid():
+            #     new_stock = form.cleaned_data['stock']
+            #     updated = queryset.update(stock_available=new_stock)
+            #     return
         else:
             form = ItemForm()
 
-        return render(request, 'admin/items/add_stock.html',
-            {'title': u'Add Stock',
-             'objects': queryset,
-             'form': form})
+        formfield_overrides = {
+            models.DecimalField: { 'widget': TextInput ( attrs= {'class': 'text-right' } ), }
+        }
+
+        context = {
+                    'title': u'Add Stock',
+                    'objects': queryset,
+                    'action_checkbox_name': helpers.ACTION_CHECKBOX_NAME,
+                    'form': form
+        }
+
+        return render(request,
+                      'admin/items/add_stock.html',
+                      context
+        )
 
     def export_as_json(self, request, queryset):
         response = HttpResponse(content_type = "application/json")
